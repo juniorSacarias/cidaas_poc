@@ -1,5 +1,7 @@
+import 'package:dotenv/dotenv.dart';
 import 'package:cidaas_poc/core/error/exceptions.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 abstract class AuthRemoteDataSource {
   Future<AuthorizationTokenResponse> signInWithCidaas();
@@ -11,12 +13,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final FlutterAppAuth appAuth;
 
   // CIDAAS CONFIGURACIÓN
-  static const String CIDAAS_ISSUER =
-      'https://<your_cidaas_tenant_url>/auth/realms/cidaas';
-  static const String CIDAAS_CLIENT_ID = '<your_client_id_from_cidaas>';
-  static const String CIDAAS_REDIRECT_URI =
-      'com.yourcompany.yourapp://oauth2redirect';
-  static const List<String> CIDAAS_SCOPES = [
+  static String cidaasIssuer = dotenv.env['CIDAAS_ISSUER'] ?? '';
+  static String cidaasClientId = dotenv.env['CIDAAS_CLIENT_ID'] ?? '';
+  static String cidaasRedirectUri = dotenv.env['CIDAAS_REDIRECT_URI'] ?? '';
+  static const List<String> cidaasScopes = [
     'openid',
     'profile',
     'email',
@@ -30,19 +30,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final result = await appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
-          CIDAAS_CLIENT_ID,
-          CIDAAS_REDIRECT_URI,
-          issuer: CIDAAS_ISSUER,
-          scopes: CIDAAS_SCOPES,
+          cidaasClientId,
+          cidaasRedirectUri,
+          issuer: cidaasIssuer,
+          scopes: cidaasScopes,
           promptValues: ['login'],
         ),
       );
-      if (result == null) {
-        throw AuthException();
-      }
       return result;
     } catch (e) {
-      // Aquí puedes añadir más lógica para diferenciar tipos de errores
       throw AuthException();
     }
   }
@@ -52,11 +48,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final result = await appAuth.token(
         TokenRequest(
-          CIDAAS_CLIENT_ID,
-          CIDAAS_REDIRECT_URI,
+          cidaasClientId,
+          cidaasRedirectUri,
           refreshToken: refreshToken,
-          issuer: CIDAAS_ISSUER,
-          scopes: CIDAAS_SCOPES,
+          issuer: cidaasIssuer,
+          scopes: cidaasScopes,
         ),
       );
       return result;
@@ -76,8 +72,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await appAuth.endSession(
         EndSessionRequest(
           idTokenHint: idToken,
-          postLogoutRedirectUrl: CIDAAS_REDIRECT_URI,
-          issuer: CIDAAS_ISSUER,
+          postLogoutRedirectUrl: cidaasRedirectUri,
+          issuer: cidaasIssuer,
         ),
       );
     } catch (e) {

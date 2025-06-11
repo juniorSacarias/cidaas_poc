@@ -9,11 +9,13 @@ environment:
 dependencies:
   bloc: ^9.0.0
   dartz: ^0.10.1
+  dotenv: ^4.2.0
   equatable: ^2.0.7
   flutter:
     sdk: flutter
   flutter_appauth: ^9.0.1
   flutter_bloc: ^9.1.1
+  flutter_dotenv: ^5.2.1
   get_it: ^8.0.3
 
 dev_dependencies:
@@ -23,3 +25,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+   - .env.development
+   - .env.production
+   - .env.staging

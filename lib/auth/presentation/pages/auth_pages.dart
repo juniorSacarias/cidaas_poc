@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cidaas_poc/auth/presentation/cubit/auth_cubit.dart';
 
 class LoginPage extends StatelessWidget {
@@ -8,13 +9,14 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Autenticación')),
+      appBar: AppBar(title: const Text('Authentication')),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Inicio de sesión exitoso!')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('Login successful!')));
+            context.go('/welcome', extra: state.user);
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(
               context,

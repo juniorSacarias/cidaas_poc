@@ -1,44 +1,98 @@
-// lib/core/errors/exceptions.dart
-
 class ServerException implements Exception {
   final String message;
   final int? statusCode;
+  final dynamic innerException;
+  final StackTrace? stackTrace;
 
   const ServerException({
-    this.message = 'Error del servidor.',
+    this.message = 'Server error.',
     this.statusCode,
+    this.innerException,
+    this.stackTrace,
   });
 
   @override
-  String toString() => 'ServerException: $message (Status: $statusCode)';
+  String toString() {
+    String output = 'ServerException: $message';
+    if (statusCode != null) {
+      output += ' (Status: $statusCode)';
+    }
+    if (innerException != null) {
+      output += '\n  Inner Exception: $innerException';
+    }
+    return output;
+  }
 }
 
 class CacheException implements Exception {
   final String message;
+  final dynamic innerException;
+  final StackTrace? stackTrace;
 
-  const CacheException({this.message = 'Error de caché.'});
+  const CacheException({
+    this.message = 'Cache error.',
+    this.innerException,
+    this.stackTrace,
+  });
 
   @override
-  String toString() => 'CacheException: $message';
+  String toString() {
+    String output = 'CacheException: $message';
+    if (innerException != null) {
+      output += '\n  Inner Exception: $innerException';
+    }
+    return output;
+  }
 }
 
-// Nueva o actualizada excepción de autenticación
 class AuthException implements Exception {
   final String message;
+  final dynamic innerException;
+  final StackTrace? stackTrace;
+  final String? errorCode;
+  final String? errorDescription;
 
-  const AuthException({this.message = 'Error de autenticación.'});
+  const AuthException({
+    this.message = 'Authentication error.',
+    this.innerException,
+    this.stackTrace,
+    this.errorCode,
+    this.errorDescription,
+  });
 
   @override
-  String toString() => 'AuthException: $message';
+  String toString() {
+    String output = 'AuthException: $message';
+    if (errorCode != null) {
+      output += ' (Code: $errorCode)';
+    }
+    if (errorDescription != null) {
+      output += ' (Description: $errorDescription)';
+    }
+    if (innerException != null) {
+      output += '\n  Inner Exception: $innerException';
+    }
+    return output;
+  }
 }
 
 class NetworkException implements Exception {
   final String message;
+  final dynamic innerException;
+  final StackTrace? stackTrace;
 
   const NetworkException({
-    this.message = 'Error de red. Verifique su conexión a Internet.',
+    this.message = 'Network error. Please check your Internet connection.',
+    this.innerException,
+    this.stackTrace,
   });
 
   @override
-  String toString() => 'NetworkException: $message';
+  String toString() {
+    String output = 'NetworkException: $message';
+    if (innerException != null) {
+      output += '\n  Inner Exception: $innerException';
+    }
+    return output;
+  }
 }

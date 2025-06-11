@@ -5,5 +5,5 @@ import 'package:cidaas_poc/auth/domain/entities/user.dart';
 abstract class AuthRepository {
   Future<Either<Failure, User>> signInWithCidaas();
   Future<Either<Failure, User>> refreshUserSession(String refreshToken);
-  Future<Either<Failure, void>> signOut();
+  Future<Either<Failure, void>> signOut(String idToken);
 }

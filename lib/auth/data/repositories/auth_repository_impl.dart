@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:cidaas_poc/core/error/exceptions.dart';
 import 'package:cidaas_poc/core/error/failures.dart';
 import 'package:cidaas_poc/auth/data/datasources/auth_remote_datasource.dart';
@@ -14,12 +15,28 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, User>> signInWithCidaas() async {
     try {
       final authResponse = await remoteDataSource.signInWithCidaas();
+
+      if (authResponse.idToken == null) {
+        return Left(AuthFailure('Authentication failed: ID token is null.'));
+      }
+
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(
+        authResponse.idToken!,
+      );
+
+      final String userEmail = decodedToken['email'] ?? 'No email provided';
+      final String userName = decodedToken['given_name'] ?? 'No name provided';
+      final String userId =
+          decodedToken['sub'] ??
+          authResponse.accessToken!; // 'sub' is the subject/user ID
+
       final user = User(
-        id: authResponse.accessToken!,
-        email: 'user@example.com',
-        name: 'John Doe',
+        id: userId,
+        email: userEmail,
+        name: userName,
         accessToken: authResponse.accessToken!,
         refreshToken: authResponse.refreshToken,
+        idToken: authResponse.idToken,
       );
       return Right(user);
     } on AuthException catch (e) {
@@ -63,10 +80,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> signOut() async {
-    const String dummyIdToken = 'your_current_id_token_here';
+  Future<Either<Failure, void>> signOut(String idToken) async {
     try {
-      await remoteDataSource.signOutCidaas(dummyIdToken);
+      await remoteDataSource.signOutCidaas(idToken);
       return const Right(null);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));

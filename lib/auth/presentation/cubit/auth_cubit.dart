@@ -4,39 +4,58 @@ import 'package:bloc/bloc.dart';
 import 'package:cidaas_poc/core/error/failures.dart';
 import 'package:cidaas_poc/auth/domain/entities/user.dart';
 import 'package:cidaas_poc/auth/domain/usecases/sign_in_with_cidaas.dart';
+import 'package:cidaas_poc/auth/domain/usecases/sign_out_with_cidaas.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final SignInWithCidaas signInWithCidaasUseCase;
+  final SignOut signOutWithCidaasUseCase;
 
-  AuthCubit({required this.signInWithCidaasUseCase}) : super(AuthInitial());
+  AuthCubit({
+    required this.signInWithCidaasUseCase,
+    required this.signOutWithCidaasUseCase,
+  }) : super(AuthInitial());
 
   Future<void> signIn() async {
     emit(AuthLoading());
     final result = await signInWithCidaasUseCase(NoParams());
     result.fold(
-      (failure) => emit(
-        AuthFailure(_mapFailureToMessage(failure)),
-      ), // Aquí se usa el Failure
+      (failure) => emit(AuthFailure(_mapFailureToMessage(failure))),
       (user) => emit(AuthSuccess(user)),
     );
   }
 
-  // Helper para mapear fallos a mensajes de UI
+  Future<void> signOut(String? idToken) async {
+    emit(AuthLoading());
+
+    if (idToken == null) {
+      debugPrint(
+        '>>> DEBUG: AuthCubit: No ID Token available for signOutCidaas.',
+      );
+      emit(AuthFailure('No ID Token available for logout.'));
+      return;
+    }
+
+    final result = await signOutWithCidaasUseCase(idToken);
+    result.fold(
+      (failure) => emit(AuthFailure(_mapFailureToMessage(failure))),
+      (_) => emit(AuthLoggedOut()),
+    );
+  }
+
   String _mapFailureToMessage(Failure failure) {
     switch (failure.runtimeType) {
       case AuthFailure _:
-        // Mensaje directo del fallo de autenticación
         return (failure as AuthFailure).message;
       case ServerFailure _:
-        return 'Problemas con el servidor. Inténtelo más tarde.';
+        return 'Server issues. Please try again later.';
       case NetworkFailure _:
-        return 'No hay conexión a Internet. Verifique su red.';
+        return 'No Internet connection. Please check your network.';
       case CacheFailure _:
-        return 'Error de datos locales.';
+        return 'Local data error.';
       default:
-        return 'Ocurrió un error inesperado. ${failure.message}';
+        return 'An unexpected error occurred. ${failure.message}';
     }
   }
 }

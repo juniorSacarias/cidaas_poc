@@ -24,3 +24,13 @@ class NetworkFailure extends Failure {
 class AuthFailure extends Failure {
   const AuthFailure(super.message);
 }
+
+class ApiFailure extends Failure {
+  final int? statusCode;
+  final dynamic responseData;
+
+  const ApiFailure(super.message, {this.statusCode, this.responseData});
+
+  @override
+  List<Object> get props => [message, statusCode ?? '', responseData ?? ''];
+}

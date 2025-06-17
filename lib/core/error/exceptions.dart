@@ -96,3 +96,34 @@ class NetworkException implements Exception {
     return output;
   }
 }
+
+class ApiException implements Exception {
+  final String message;
+  final int? statusCode;
+  final dynamic innerException;
+  final StackTrace? stackTrace;
+  final dynamic responseData;
+
+  const ApiException({
+    this.message = 'API error.',
+    this.statusCode,
+    this.innerException,
+    this.stackTrace,
+    this.responseData,
+  });
+
+  @override
+  String toString() {
+    String output = 'ApiException: $message';
+    if (statusCode != null) {
+      output += ' (Status: $statusCode)';
+    }
+    if (responseData != null) {
+      output += ' (Response Data: $responseData)';
+    }
+    if (innerException != null) {
+      output += '\n  Inner Exception: $innerException';
+    }
+    return output;
+  }
+}

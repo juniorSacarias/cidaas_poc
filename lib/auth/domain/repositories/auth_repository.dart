@@ -6,4 +6,6 @@ abstract class AuthRepository {
   Future<Either<Failure, User>> signInWithCidaas();
   Future<Either<Failure, User>> refreshUserSession(String refreshToken);
   Future<Either<Failure, void>> signOut(String idToken);
+  Future<Either<Failure, String?>> getRefreshToken();
+  Future<Either<Failure, User?>> getCachedUser();
 }

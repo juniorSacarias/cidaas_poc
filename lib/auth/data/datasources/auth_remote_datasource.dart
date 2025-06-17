@@ -1,7 +1,8 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:cidaas_poc/core/error/exceptions.dart';
-import 'package:flutter/services.dart';
 
 abstract class AuthRemoteDataSource {
   Future<TokenResponse> signInWithCidaas();
@@ -61,6 +62,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       final TokenResponse tokenResponse = await appAuth.token(tokenRequest);
+      debugPrint(
+        '>>> DEBUG: tokenResponse.refreshToken: ${tokenResponse.refreshToken?.substring(0, 10)}...',
+      );
       return tokenResponse;
     } catch (e, s) {
       if (e is PlatformException) {

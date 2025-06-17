@@ -50,6 +50,15 @@ class WelcomePage extends StatelessWidget {
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
+                  context.go(
+                    '/protected-resource',
+                  ); // Navegar al recurso protegido
+                },
+                child: const Text('Go to Protected Resource'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
                   context.read<AuthCubit>().signOut(user.idToken);
                   context.go('/');
                 },

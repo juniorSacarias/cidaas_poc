@@ -67,7 +67,7 @@ class AuthCubit extends Cubit<AuthState> {
       },
       (user) {
         debugPrint(
-          '>>> DEBUG: AuthCubit: Sesión refrescada con éxito para ${user.name}.',
+          '>>> DEBUG: AuthCubit: Session successfully refreshed for ${user.name}.',
         );
         emit(
           AuthSuccess(user),

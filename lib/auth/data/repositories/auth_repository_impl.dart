@@ -57,7 +57,7 @@ class AuthRepositoryImpl implements AuthRepository {
           user.refreshToken!,
         );
       }
-      debugPrint('>>> DEBUG: Tokens guardados en el almacenamiento seguro.');
+      debugPrint('>>> DEBUG: Tokens saved in secure storage.');
 
       return Right(user);
     } on AuthException catch (e) {
@@ -124,7 +124,7 @@ class AuthRepositoryImpl implements AuthRepository {
         // Si no se devuelve, asegurar que el viejo se elimine si el flujo lo requiere
         await secureLocalStorage.deleteToken(cachedRefreshToken);
       }
-      debugPrint('>>> DEBUG: Nuevos tokens guardados tras el refresh.');
+      debugPrint('>>> DEBUG: New tokens saved after refresh.');
       // --- FIN ALMACENAMIENTO ---
 
       return Right(user);

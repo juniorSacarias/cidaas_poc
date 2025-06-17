@@ -55,6 +55,15 @@ class WelcomePage extends StatelessWidget {
                 },
                 child: const Text('Log Out'),
               ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  context
+                      .read<AuthCubit>()
+                      .refreshSession(); // Llama al método de refresco
+                },
+                child: const Text('Refresh Session (for testing)'),
+              ),
             ],
           ),
         ),

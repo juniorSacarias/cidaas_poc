@@ -14,5 +14,3 @@ class SignInWithCidaas implements UseCase<User, NoParams> {
     return await repository.signInWithCidaas();
   }
 }
-
-class NoParams {}

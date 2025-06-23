@@ -24,6 +24,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     'profile',
     'email',
     'offline_access',
+    'dk-cpr',
   ];
 
   AuthRemoteDataSourceImpl(this.appAuth);
@@ -65,6 +66,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       debugPrint(
         '>>> DEBUG: tokenResponse.refreshToken: ${tokenResponse.refreshToken?.substring(0, 10)}...',
       );
+      debugPrint('>>> DEBUG: tokenResponse: ${tokenResponse}...');
       return tokenResponse;
     } catch (e, s) {
       if (e is PlatformException) {
